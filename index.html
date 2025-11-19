@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRERANA - Personal Resource for Executive Relief</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lottie Player for avatar animation -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .gradient-text {
+            /* Updated gradient for a more 'Academic Nurturing' feel */
+            background: linear-gradient(to right, #4c51bf, #10b981); /* Indigo to Green */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .habit-day {
+            transition: all 0.3s ease;
+        }
+        .habit-day.completed {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+        /* Custom spinner for better loading look */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4c51bf; /* Indigo color */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .auth-tab-active {
+            border-color: #4c51bf; /* Indigo */
+            color: #4c51bf;
+        }
+        /* Style for user messages to push content next to avatar */
+        .user-message-container {
+            display: flex; 
+            justify-content: flex-end; 
+            align-items: flex-end;
+            margin-top: 0.5rem;
+        }
+        .bot-message-container {
+            display: flex;
+            align-items: flex-end;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white shadow-lg sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+            <a href="#" class="flex items-center space-x-2">
+                 <svg class="h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                </svg>
+                <span class="text-2xl font-bold gradient-text">PRERANA</span>
+            </a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#resources" class="text-gray-600 hover:text-indigo-600 transition font-medium">Resources</a>
+                <a href="#booking" class="text-gray-600 hover:text-indigo-600 transition font-medium">Booking</a>
+                <a href="#habits" class="text-gray-600 hover:text-indigo-600 transition font-medium">Habit Tracker</a>
+                <a href="#streaks" class="text-gray-600 hover:text-indigo-600 transition font-medium">Streaks</a>
+                <a href="#dashboard" class="text-gray-600 hover:text-indigo-600 transition font-medium">Dashboard</a>
+            </div>
+            <div class="flex items-center gap-4">
+                 <button id="open-auth-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition shadow-lg flex items-center text-sm sm:text-base">
+                     Sign In / Sign Up
+                </button>
+                <div id="user-actions" class="hidden items-center gap-4">
+                     <button id="open-profile-btn" class="text-gray-600 hover:text-indigo-600 p-1 rounded-full hover:bg-indigo-50 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zM12 12a6 6 0 00-6 6h12a6 6 0 00-6-6z" clip-rule="evenodd" />
+                        </svg>
+                     </button>
+                     <button id="signout-btn" class="bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600 transition shadow text-sm sm:text-base">Sign Out</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section with Chatbot placeholder -->
+        <section id="hero" class="bg-indigo-50 py-20">
+            <div class="container mx-auto px-4 sm:px-6 text-center">
+                <h1 class="text-4xl sm:text-5xl font-extrabold gradient-text mb-2">Welcome to PRERANA</h1>
+                <h2 class="text-lg sm:text-xl font-medium text-indigo-700 mb-6">(Personal Resource for Executive Relief and Academic Nurturing Assistance)</h2>
+                <p class="text-md sm:text-lg text-gray-700 max-w-3xl mx-auto mb-10">Your confidential space designed for higher education students. Get immediate executive relief, nurture your academic focus, and build resilience.</p>
+                
+                <!-- Interactive Chatbot Box -->
+                <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl max-w-lg mx-auto transform hover:scale-[1.02] transition duration-300">
+                    <h3 class="text-2xl font-bold mb-4 text-indigo-600">Need Immediate Executive Relief?</h3>
+                    <p class="text-gray-600 mb-6">Our AI Assistant is here 24/7 to listen and offer supportive coping strategies.</p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <button id="hero-open-chat-text-btn" class="flex items-center justify-center w-full bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 transition font-semibold shadow-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd" />
+                            </svg>
+                            Start Talking (Text)
+                        </button>
+                        <button class="flex items-center justify-center w-full bg-green-500 text-white px-6 py-3 rounded-xl hover:bg-green-600 transition font-semibold shadow-lg opacity-80">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M7 4a3 3 0 016 0v6a3 3 0 11-6 0V4z" />
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4 10a6 6 0 1112 0 6 6 0 01-12 0z" clip-rule="evenodd" />
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            </svg>
+                            Chat with Voice
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources Section -->
+        <section id="resources" class="py-20 bg-white">
+             <div class="container mx-auto px-4 sm:px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-indigo-600">Academic Nurturing Toolkit</h2>
+                    <p class="text-gray-600 mt-2">Curated, short-form resources for instant relief and sustained mental health.</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Resource 1: Meditation Video -->
+                    <div class="bg-indigo-50 rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 flex flex-col">
+                        <iframe class="w-full h-48" src="https://www.youtube.com/embed/O-6f5wQXSu8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <div class="p-6 flex-grow">
+                            <h3 class="font-bold text-lg mb-2 text-indigo-700">10-Minute Focus Meditation</h3>
+                            <p class="text-gray-600">A short session to clear exam stress and enhance concentration for studying.</p>
+                        </div>
+                    </div>
+                    <!-- Resource 2: Reading Material -->
+                    <div class="bg-indigo-50 rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 flex flex-col">
+                        <img src="https://placehold.co/600x400/93c5fd/1e40af?text=Study+Anxiety" alt="Reading Material Thumbnail" class="w-full h-48 object-cover">
+                        <div class="p-6 flex-grow">
+                            <h3 class="font-bold text-lg mb-2 text-indigo-700">Managing High-Stakes Anxiety</h3>
+                            <p class="text-gray-600">Articles on managing pressure and preventing student burnout.</p>
+                            <a href="#" class="text-indigo-600 font-semibold mt-4 inline-block hover:underline">Start Reading &rarr;</a>
+                        </div>
+                    </div>
+                    <!-- Resource 3: Relaxation Audio -->
+                     <div class="bg-indigo-50 rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 flex flex-col">
+                        <img src="https://placehold.co/600x400/a78bfa/ffffff?text=Deep+Sleep+Audio" alt="Audio Thumbnail" class="w-full h-48 object-cover">
+                        <div class="p-6 flex-grow">
+                            <h3 class="font-bold text-lg mb-2 text-indigo-700">Deep Relaxation & Sleep Aid</h3>
+                            <p class="text-gray-600">Listen to binaural beats and nature sounds for deep rest and recovery.</p>
+                            <a href="#" class="text-indigo-600 font-semibold mt-4 inline-block hover:underline">Listen Now &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Booking Section -->
+        <section id="booking" class="py-20 bg-gray-100">
+             <div class="container mx-auto px-4 sm:px-6">
+                <div class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-xl">
+                    <h2 class="text-3xl font-bold mb-6 text-center text-indigo-600">Schedule Professional Assistance</h2>
+                    <p class="text-gray-600 mb-6 text-center">Need to speak with a professional? Submit a request privately.</p>
+                    <form id="booking-form">
+                        <div class="mb-4">
+                            <label for="topic" class="block text-gray-700 mb-2 font-medium">Primary concern (e.g. Thesis stress, relationship issues)</label>
+                            <input type="text" id="topic" class="w-full p-3 border border-gray-300 rounded-xl focus:border-indigo-500 focus:ring-indigo-500 transition" placeholder="e.g., Exam stress, anxiety">
+                        </div>
+                        <div class="mb-4">
+                            <label for="availability" class="block text-gray-700 mb-2 font-medium">Your general availability</label>
+                            <textarea id="availability" rows="3" class="w-full p-3 border border-gray-300 rounded-xl focus:border-indigo-500 focus:ring-indigo-500 transition" placeholder="e.g., Weekday afternoons after 3 PM"></textarea>
+                        </div>
+                         <button type="submit" class="w-full bg-indigo-600 text-white p-3 rounded-xl hover:bg-indigo-700 transition font-semibold shadow-md">Request Confidential Appointment</button>
+                    </form>
+                    <div id="booking-confirmation" class="hidden mt-6 text-center bg-green-100 text-green-800 p-4 rounded-xl font-semibold border-l-4 border-green-500">
+                        <p>✅ Request Sent! A counselor will reach out via the university's confidential portal within 24 hours.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Healthy Habits Tracker Section -->
+        <section id="habits" class="py-20 bg-gray-50">
+            <div class="container mx-auto px-4 sm:px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-indigo-600">Build Positive Routines (P.R.)</h2>
+                    <p class="text-gray-600 mt-2">Track small, sustainable habits to maximize your focus and relieve executive pressure.</p>
+                    <button id="choose-habits-btn" class="mt-4 bg-green-500 text-white px-6 py-3 rounded-xl hover:bg-green-600 transition shadow-lg transform hover:scale-[1.05]">Choose Habits to Track</button>
+                </div>
+
+                <!-- Inline Habit Selection Area -->
+                <div id="habit-selection-area" class="hidden max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-2xl mt-6 mb-8 border border-indigo-100">
+                    <h3 class="text-xl font-bold mb-4 text-indigo-700">Select the habits you want to track:</h3>
+                    <div id="habit-options-inline" class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- JS will populate this -->
+                    </div>
+                    <div class="mt-6 text-right">
+                        <button id="save-habits-inline" class="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 transition font-semibold shadow-md">Save Selections</button>
+                    </div>
+                </div>
+
+                <div id="habit-tracker-container" class="max-w-4xl mx-auto space-y-6">
+                     <!-- Habit trackers will be populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Active Streaks Section -->
+        <section id="streaks" class="py-20 bg-white">
+            <div class="container mx-auto px-4 sm:px-6">
+                <div class="text-center mb-12">
+                   <h2 class="text-3xl font-bold text-indigo-600">Your Resilience Streaks</h2>
+                   <p class="text-gray-600 mt-2">Visualizing consistency is key to long-term academic success and well-being.</p>
+                </div>
+                <div class="max-w-2xl mx-auto bg-indigo-50 p-8 rounded-2xl shadow-xl border border-indigo-100">
+                     <div id="streak-dashboard" class="space-y-4">
+                         <!-- Streaks populated by JS -->
+                        <p class="text-gray-500 italic text-center">Select and mark habits as done to see your current positive streaks!</p>
+                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="py-16 bg-gray-100">
+            <div class="container mx-auto px-4 sm:px-6">
+                <h1 class="text-4xl font-bold mb-10 text-center text-indigo-600">Your PRERANA Dashboard</h1>
+                <div class="max-w-4xl mx-auto">
+                    <!-- Trends & Mood Log -->
+                    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl border border-gray-200">
+                        <h2 class="text-2xl font-bold mb-4 text-indigo-700">Emotional Resilience Tracker</h2>
+                        <p class="text-gray-600 mb-6">Log your mood daily. Understanding these trends is a vital part of your Personal Resource strategy.</p>
+                        <div class="relative h-80 sm:h-96 w-full">
+                            <canvas id="moodChart"></canvas>
+                        </div>
+                        <div class="mt-8 pt-6 border-t border-gray-200">
+                             <h3 class="text-xl font-semibold mb-3">How is your mental energy today?</h3>
+                             <div id="mood-logger" class="flex items-center justify-between gap-2 flex-wrap p-2 bg-indigo-50 rounded-lg">
+                                 <p class="mr-2 text-sm font-medium">Low Energy</p>
+                                 <!-- Mood buttons -->
+                                 <button data-mood="1" class="mood-btn h-10 w-10 rounded-full bg-red-400 hover:bg-red-500 transition shadow"></button>
+                                 <button data-mood="2" class="mood-btn h-10 w-10 rounded-full bg-orange-400 hover:bg-orange-500 transition shadow"></button>
+                                 <button data-mood="3" class="mood-btn h-10 w-10 rounded-full bg-yellow-400 hover:bg-yellow-500 transition shadow"></button>
+                                 <button data-mood="4" class="mood-btn h-10 w-10 rounded-full bg-lime-400 hover:bg-lime-500 transition shadow"></button>
+                                 <button data-mood="5" class="mood-btn h-10 w-10 rounded-full bg-green-400 hover:bg-green-500 transition shadow"></button>
+                                 <p class="ml-2 text-sm font-medium">High Energy</p>
+                             </div>
+                             <p id="mood-confirmation" class="text-green-600 mt-3 font-medium hidden text-center">Mood logged! You're nurturing your well-being.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chatbot Modal -->
+        <div id="chat-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col h-full max-h-[700px] border-4 border-indigo-500">
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between p-4 border-b bg-indigo-50 rounded-t-xl">
+                    <div class="flex items-center gap-3">
+                        <!-- Lottie Avatar in Header -->
+                         <lottie-player id="prerana-avatar"
+                            src="https://lottie.host/8e202534-738b-4b19-b5f7-f58c734e5a95/QeC4B4K24m.json" 
+                            background="transparent" 
+                            speed="1" 
+                            style="width: 50px; height: 50px;" 
+                            loop autoplay>
+                        </lottie-player>
+                        <h3 class="text-xl font-bold text-indigo-700">PRERANA AI Assistant</h3>
+                    </div>
+                    <button id="close-chat-btn" class="text-gray-500 hover:text-red-600 p-1 rounded-full hover:bg-red-100 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <!-- Chat Messages -->
+                <div id="chat-messages" class="flex-grow p-4 space-y-4 overflow-y-auto bg-white">
+                    <!-- Initial Bot Message with Logo -->
+                    <div class="bot-message-container">
+                        <span class="text-2xl mr-2">❤️</span> 
+                        <div class="bg-indigo-100 text-gray-800 p-3 rounded-lg rounded-tl-none max-w-xs shadow-sm">
+                            <p>Hello! I'm your PRERANA Assistant. How can I offer you Executive Relief or Academic Nurturing support today?</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Message Input -->
+                <div class="p-4 border-t bg-gray-50">
+                    <form id="chat-form" class="flex items-center gap-2">
+                        <input type="text" id="chat-input" placeholder="Type your message..." class="w-full p-3 border border-gray-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 transition" autocomplete="off">
+                        <button type="submit" class="w-auto bg-indigo-600 text-white p-3 rounded-xl hover:bg-indigo-700 transition font-semibold shadow-md">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                             </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auth Modal -->
+        <div id="auth-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md relative">
+                <button id="close-auth-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <div class="p-8">
+                    <h2 class="text-3xl font-bold mb-6 text-center gradient-text">PRERANA Access</h2>
+                    <div class="flex border-b mb-6">
+                        <button id="signin-tab" class="py-2 px-4 w-1/2 text-center font-semibold border-b-2 auth-tab-active">Sign In</button>
+                        <button id="signup-tab" class="py-2 px-4 w-1/2 text-center font-semibold border-b-2 border-transparent text-gray-500">Sign Up</button>
+                    </div>
+
+                    <!-- Sign In Form -->
+                    <div id="signin-form-container">
+                        <form id="signin-form">
+                            <div class="mb-4">
+                                <label for="signin-email" class="block text-gray-700 mb-2 font-medium">University Email</label>
+                                <input type="email" id="signin-email" class="w-full p-3 border border-gray-300 rounded-xl focus:border-indigo-500 focus:ring-indigo-500" required>
+                            </div>
+                            <div class="mb-6">
+                                <label for="signin-password" class="block text-gray-700 mb-2 font-medium">Password</label>
+                                <input type="password" id="signin-password" class="w-full p-3 border border-gray-300 rounded-xl focus:border-indigo-500 focus:ring-indigo-500" required>
+                            </div>
+                            <button type="submit" class="w-full bg-indigo-600 text-white p-3 rounded-xl hover:bg-indigo-700 transition font-semibold shadow-md">Sign In</button>
+                            <a href="#" class="text-indigo-600 text-sm mt-4 block text-center hover:underline">Forgot Password?</a>
+                        </form>
+                    </div>
+
+                    <!-- Sign Up Form -->
+                    <div id="signup-form-container" class="hidden">
+                        <form id="signup-form">
+                            <div class="mb-4">
+                                <label for="signup-name" class="block text-gray-700 mb-2 font-medium">Full Name</label>
+                                <input type="text" id="signup-name" class="w-full p-3 border border-gray-300 rounded-xl focus:border-indigo-500 focus:ring-indigo-500" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="signup-email" class="block text-gray-700 mb-2 font-medium">University Email</label>
+                                <input type="email" id="signup-email" class="w-full p-3 border border-gray-300 rounded-xl focus:border-indigo-500 focus:ring-indigo-500" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="signup-password" class="block text-gray-700 mb-2 font-medium">Password</label>
+                                <input type="password" id="signup-password" class="w-full p-3 border border-gray-300 rounded-xl focus:border-indigo-500 focus:ring-indigo-500" required>
+                            </div>
+                             <div class="mb-6">
+                                <label for="signup-confirm-password" class="block text-gray-700 mb-2 font-medium">Confirm Password</label>
+                                <input type="password" id="signup-confirm-password" class="w-full p-3 border border-gray-300 rounded-xl focus:border-indigo-500 focus:ring-indigo-500" required>
+                            </div>
+                            <button type="submit" class="w-full bg-green-600 text-white p-3 rounded-xl hover:bg-green-700 transition font-semibold shadow-md">Create PRERANA Account</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Modal -->
+        <div id="profile-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative">
+                <button id="close-profile-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <div class="p-8">
+                    <h2 class="text-2xl font-bold mb-6 text-center text-indigo-700">Student Profile</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Full Name</label>
+                            <span id="profile-name-view" class="mt-1 block w-full p-3 border border-gray-200 rounded-xl bg-gray-50">Jane Doe</span>
+                            <input type="text" id="profile-name-edit" class="hidden mt-1 w-full p-3 border border-gray-300 rounded-xl" value="Jane Doe">
+                        </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">Age</label>
+                            <span id="profile-age-view" class="mt-1 block w-full p-3 border border-gray-200 rounded-xl bg-gray-50">Not set</span>
+                            <input type="number" id="profile-age-edit" class="hidden mt-1 w-full p-3 border border-gray-300 rounded-xl">
+                        </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">Gender</label>
+                            <span id="profile-gender-view" class="mt-1 block w-full p-3 border border-gray-200 rounded-xl bg-gray-50">Not set</span>
+                            <input type="text" id="profile-gender-edit" class="hidden mt-1 w-full p-3 border border-gray-300 rounded-xl" placeholder="e.g., Female, Male, Non-binary">
+                        </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">Course of Study</label>
+                            <span id="profile-course-view" class="mt-1 block w-full p-3 border border-gray-200 rounded-xl bg-gray-50">Not set</span>
+                            <input type="text" id="profile-course-edit" class="hidden mt-1 w-full p-3 border border-gray-300 rounded-xl" placeholder="e.g., Computer Science, Engineering">
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                         <button id="edit-profile-btn" class="w-full bg-indigo-600 text-white p-3 rounded-xl hover:bg-indigo-700 transition font-semibold">Edit Profile</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-10">
+        <div class="container mx-auto px-6 text-center">
+             <p class="text-lg font-bold mb-1">PRERANA</p>
+             <p class="text-indigo-300 text-sm mb-4">Personal Resource for Executive Relief and Academic Nurturing Assistance</p>
+             <p>&copy; 2025 PRERANA. All rights reserved.</p>
+             <p class="text-gray-400 mt-2 text-sm">Our project is a mental health assistant.</p>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DATA & STATE MANAGEMENT (Using localStorage for persistence in this static file) ---
+        const ALL_HABITS = [
+            { id: 'walk', name: '10-Min Walk (Body)', icon: '🚶' },
+            { id: 'meditate', name: '5-Min Meditation (Mind)', icon: '🧘' },
+            { id: 'music', name: 'Listen to Calming Music (Relief)', icon: '🎵' },
+            { id: 'read', name: 'Read a Non-Academic Chapter (Break)', icon: '📚' },
+            { id: 'hobby', name: 'Practice a Hobby (Joy)', icon: '🎨' },
+            { id: 'hydrate', name: 'Drink 8 Glasses of Water (Focus)', icon: '💧'},
+            { id: 'journal', name: 'Write a Journal Entry (Process)', icon: '✍️'}
+        ];
+
+        // Unique key updated to PRERANA
+        const storagePrefix = 'prerana_'; 
+        let userHabits = JSON.parse(localStorage.getItem(storagePrefix + 'userHabits')) || [];
+        let habitData = JSON.parse(localStorage.getItem(storagePrefix + 'habitData')) || {};
+        let moodData = JSON.parse(localStorage.getItem(storagePrefix + 'moodData')) || [];
+        let moodChart;
+        let profileData = JSON.parse(localStorage.getItem(storagePrefix + 'profileData')) || {
+            name: 'Jane Doe',
+            age: null,
+            gender: null,
+            course: null
+        };
+
+        // --- DOM ELEMENTS ---
+        const habitTrackerContainer = document.getElementById('habit-tracker-container');
+        const streakDashboard = document.getElementById('streak-dashboard');
+        const moodLogger = document.getElementById('mood-logger');
+        const habitSelectionArea = document.getElementById('habit-selection-area');
+        
+        // Chatbot elements
+        const openChatBtnHero = document.getElementById('hero-open-chat-text-btn');
+        const closeChatBtn = document.getElementById('close-chat-btn');
+        const chatModal = document.getElementById('chat-modal');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const preranaAvatar = document.getElementById('prerana-avatar'); // Get the Lottie player
+
+
+        // Auth elements
+        const openAuthBtn = document.getElementById('open-auth-btn');
+        const closeAuthBtn = document.getElementById('close-auth-btn');
+        const authModal = document.getElementById('auth-modal');
+        const signinTab = document.getElementById('signin-tab');
+        const signupTab = document.getElementById('signup-tab');
+        const signinFormContainer = document.getElementById('signin-form-container');
+        const signupFormContainer = document.getElementById('signup-form-container');
+        const signinForm = document.getElementById('signin-form');
+        const signupForm = document.getElementById('signup-form');
+        const userActions = document.getElementById('user-actions');
+        const signoutBtn = document.getElementById('signout-btn');
+
+        // Profile elements
+        const openProfileBtn = document.getElementById('open-profile-btn');
+        const closeProfileBtn = document.getElementById('close-profile-btn');
+        const profileModal = document.getElementById('profile-modal');
+        const editProfileBtn = document.getElementById('edit-profile-btn');
+
+
+        // --- INITIALIZATION ---
+        function initializeApp() {
+            renderDashboard();
+            renderActiveHabitTrackers();
+            setupEventListeners();
+        }
+        
+        // --- RENDERING FUNCTIONS ---
+        function renderDashboard() {
+            renderStreakDashboard();
+            createMoodChart();
+            updateMoodLoggerUI();
+        }
+
+        function renderStreakDashboard() {
+            streakDashboard.innerHTML = '';
+            if (userHabits.length === 0) {
+                streakDashboard.innerHTML = `<p class="text-gray-500 italic text-center">Select and mark habits as done to see your current positive streaks!</p>`;
+                return;
+            }
+            userHabits.forEach(habitId => {
+                const habit = ALL_HABITS.find(h => h.id === habitId);
+                if (!habit) return;
+
+                const streak = calculateStreak(habit.id);
+                const streakEl = document.createElement('div');
+                streakEl.className = 'flex items-center justify-between bg-white p-4 rounded-xl shadow-md border-l-4 border-yellow-500';
+                streakEl.innerHTML = `
+                    <div class="flex items-center">
+                        <span class="text-3xl mr-4">${habit.icon}</span>
+                        <span class="font-medium text-indigo-800">${habit.name.split('(')[0].trim()}</span>
+                    </div>
+                    <span class="font-bold text-xl text-yellow-600">${streak} Day Streak 🔥</span>
+                `;
+                streakDashboard.appendChild(streakEl);
+            });
+        }
+        
+        function renderActiveHabitTrackers() {
+            habitTrackerContainer.innerHTML = '';
+            if (userHabits.length === 0) {
+                 habitTrackerContainer.innerHTML = `<p class="text-center text-gray-500 p-8 bg-white rounded-xl shadow-md">Click the "Choose Habits to Track" button above to start building your Personal Resource.</p>`;
+                 return;
+            }
+            const today = getTodayString();
+             if (!habitData[today]) habitData[today] = {};
+
+            userHabits.forEach(habitId => {
+                const habit = ALL_HABITS.find(h => h.id === habitId);
+                if (!habit) return;
+                
+                const isCompletedToday = habitData[today][habit.id] || false;
+                const habitElement = document.createElement('div');
+                habitElement.className = 'habit-item bg-white p-6 rounded-xl shadow-xl border-l-4 border-indigo-500';
+                habitElement.innerHTML = `
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4">
+                        <div class="flex items-center mb-3 sm:mb-0">
+                            <span class="text-3xl mr-4">${habit.icon}</span>
+                            <div>
+                                <span class="font-semibold text-xl text-indigo-700">${habit.name.split('(')[0].trim()}</span>
+                                <span class="text-sm text-gray-500 block">${habit.name.match(/\(([^)]+)\)/)[1]} Focus</span>
+                            </div>
+                        </div>
+                        <button data-habit-id="${habit.id}" class="toggle-habit-btn ${isCompletedToday ? 'bg-green-500 hover:bg-green-600' : 'bg-indigo-500 hover:bg-indigo-600'} text-white font-bold py-2 px-4 rounded-full transition shadow-md w-full sm:w-auto">
+                            ${isCompletedToday ? 'Achieved Today ✅' : 'Mark as Done'}
+                        </button>
+                    </div>
+                    <div class="habit-days-grid grid grid-cols-7 gap-1 sm:gap-2 pt-4 border-t border-gray-100 mt-4">
+                        ${renderDaysForHabit(habit.id)}
+                    </div>`;
+                habitTrackerContainer.appendChild(habitElement);
+            });
+            addHabitButtonListeners();
+        }
+        
+        function renderDaysForHabit(habitId) {
+            let daysHtml = '';
+            const today = new Date();
+            const daysInGrid = 21; // Show 3 weeks
+            
+            for (let i = daysInGrid - 1; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i);
+                const dateString = date.toISOString().split('T')[0];
+                const isCompleted = habitData[dateString] && habitData[dateString][habitId];
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+
+                // Interactive tooltip for date visibility
+                daysHtml += `<div class="habit-day h-6 w-6 rounded-full border-2 border-gray-300 ${isCompleted ? 'completed' : 'bg-gray-100'} cursor-help relative group" title="${dateString} (${dayName})">
+                    <span class="absolute top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded hidden group-hover:block whitespace-nowrap z-10">${dayName}</span>
+                </div>`;
+            }
+            return daysHtml;
+        }
+
+        function renderHabitSelectorInline() {
+            const optionsContainer = document.getElementById('habit-options-inline');
+            optionsContainer.innerHTML = '';
+            ALL_HABITS.forEach(habit => {
+                const isChecked = userHabits.includes(habit.id);
+                optionsContainer.innerHTML += `
+                    <label class="flex items-center space-x-3 p-3 rounded-xl border border-gray-200 hover:bg-indigo-50 cursor-pointer transition shadow-sm">
+                        <input type="checkbox" data-habit-id="${habit.id}" class="h-5 w-5 rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500" ${isChecked ? 'checked' : ''}>
+                        <span class="text-xl">${habit.icon}</span>
+                        <span class="font-medium">${habit.name}</span>
+                    </label>
+                `;
+            });
+        }
+
+        function renderProfileData() {
+            document.getElementById('profile-name-view').textContent = profileData.name || 'Not set';
+            document.getElementById('profile-age-view').textContent = profileData.age || 'Not set';
+            document.getElementById('profile-gender-view').textContent = profileData.gender || 'Not set';
+            document.getElementById('profile-course-view').textContent = profileData.course || 'Not set';
+        }
+
+        // --- LOGIC & HELPERS ---
+        function getTodayString() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        function calculateStreak(habitId) {
+            let streak = 0;
+            let day = new Date();
+            // Start check from yesterday, unless it is today and marked complete
+            const todayString = getTodayString();
+            
+            // Check if today is completed first
+            if (habitData[todayString] && habitData[todayString][habitId]) {
+                streak++;
+            }
+            day.setDate(day.getDate() - 1); // Move to yesterday
+
+            while (true) {
+                const dateString = day.toISOString().split('T')[0];
+                if (habitData[dateString] && habitData[dateString][habitId]) {
+                    streak++;
+                    day.setDate(day.getDate() - 1);
+                } else {
+                    break;
+                }
+            }
+            return streak;
+        }
+
+        function saveData() {
+            localStorage.setItem(storagePrefix + 'userHabits', JSON.stringify(userHabits));
+            localStorage.setItem(storagePrefix + 'habitData', JSON.stringify(habitData));
+            localStorage.setItem(storagePrefix + 'moodData', JSON.stringify(moodData));
+            localStorage.setItem(storagePrefix + 'profileData', JSON.stringify(profileData));
+        }
+
+        function createMoodChart() {
+            const ctx = document.getElementById('moodChart').getContext('2d');
+            const labels = [];
+            const dataPoints = [];
+            const pointBackgroundColors = [];
+
+            const moodToColor = {
+                1: 'rgba(239, 68, 68, 1)',       // red-500
+                2: 'rgba(249, 115, 22, 1)',      // orange-500
+                3: 'rgba(234, 179, 8, 1)',       // yellow-500
+                4: 'rgba(132, 204, 22, 1)',      // lime-500
+                5: 'rgba(34, 197, 94, 1)',       // green-500
+                null: 'rgba(156, 163, 175, 0.5)' // gray-400 for non-logged days
+            };
+
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateString = date.toISOString().split('T')[0];
+                const dayLabel = date.toLocaleDateString('en-US', { weekday: 'short' });
+                labels.push(dayLabel);
+                
+                const moodEntry = moodData.find(entry => entry.date === dateString);
+                const moodValue = moodEntry ? moodEntry.mood : null;
+                dataPoints.push(moodValue);
+                pointBackgroundColors.push(moodToColor[moodValue] || moodToColor.null);
+            }
+
+            if (moodChart) {
+                moodChart.destroy();
+            }
+
+            // Custom gradient for PRERANA brand look
+            const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.clientHeight);
+            gradient.addColorStop(0, 'rgba(79, 70, 229, 0.6)');   // Indigo-600
+            gradient.addColorStop(0.5, 'rgba(16, 185, 129, 0.4)'); // Green
+            gradient.addColorStop(1, 'rgba(156, 163, 175, 0.1)');    // Light Gray
+
+            moodChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Mental Energy Trend (1=Low, 5=High)',
+                        data: dataPoints,
+                        borderColor: '#4f46e5', // Indigo-600 for the line
+                        backgroundColor: gradient,
+                        fill: true,
+                        tension: 0.4,
+                        spanGaps: true,
+                        pointBackgroundColor: pointBackgroundColors,
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 3,
+                        pointRadius: 7,
+                        pointHoverRadius: 9
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5,
+                            ticks: {
+                                stepSize: 1,
+                                font: { size: 14 }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: { size: 14 }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Mood Score: ${context.parsed.y}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateMoodLoggerUI() {
+            const today = getTodayString();
+            const todaysMood = moodData.find(m => m.date === today);
+            
+            document.querySelectorAll('.mood-btn').forEach(btn => {
+                btn.classList.remove('ring-4', 'ring-offset-2', 'ring-indigo-500', 'scale-110');
+                if(todaysMood && btn.dataset.mood == todaysMood.mood) {
+                    btn.classList.add('ring-4', 'ring-offset-2', 'ring-indigo-500', 'scale-110');
+                }
+            });
+        }
+
+        function setLoggedInState(loggedIn) {
+            if (loggedIn) {
+                openAuthBtn.classList.add('hidden');
+                userActions.classList.remove('hidden');
+                userActions.classList.add('flex');
+            } else {
+                openAuthBtn.classList.remove('hidden');
+                userActions.classList.add('hidden');
+                userActions.classList.remove('flex');
+            }
+        }
+        
+        // --- AVATAR LOGIC: Controls the Lottie animation speed and state ---
+        function setAvatarAnimation(state, durationMs = 3000) {
+            const avatar = document.getElementById('prerana-avatar');
+            if (!avatar) return;
+            
+            // Clear any previous speaking timeout
+            if (window.avatarTimeout) {
+                clearTimeout(window.avatarTimeout);
+            }
+
+            if (state === 'speaking') {
+                // High speed simulation for "talking"
+                avatar.speed = 2.0; 
+                avatar.play();
+
+                // Set a timeout to revert to idle after the estimated "speech" duration
+                window.avatarTimeout = setTimeout(() => {
+                    setAvatarAnimation('idle');
+                }, durationMs);
+
+            } else if (state === 'thinking') {
+                 // Slow speed simulation for "waiting" or "thinking"
+                 avatar.speed = 0.5;
+                 avatar.play();
+            } else { // 'idle'
+                // Normal speed for background loop
+                avatar.speed = 1.0;
+                avatar.play();
+            }
+        }
+
+        // --- TTS API INTEGRATION (Mocked) ---
+        async function speakWithTTS(text) {
+            // Mock Gemini TTS API Call
+            const speakingDuration = text.length * 50; // Estimate time based on character count
+
+            // --- 1. Bot Processing (Thinking) ---
+            setAvatarAnimation('thinking');
+
+            // Simulate the time taken to generate the audio from the API (2 seconds)
+            await new Promise(resolve => setTimeout(resolve, 2000)); 
+
+            // --- 2. Bot Speaking (Avatar Animation) ---
+            setAvatarAnimation('speaking', speakingDuration);
+
+            // In a real application, you would play the audio here:
+            // const audioUrl = await generateAudio(text);
+            // playAudio(audioUrl); 
+
+            // Simulate the duration the audio would take to play
+            await new Promise(resolve => setTimeout(resolve, speakingDuration));
+
+            // --- 3. Bot Idle ---
+            setAvatarAnimation('idle');
+        }
+
+
+        // --- EVENT LISTENERS ---
+        function setupEventListeners() {
+            document.getElementById('choose-habits-btn').addEventListener('click', () => {
+                renderHabitSelectorInline();
+                habitSelectionArea.classList.toggle('hidden');
+            });
+            
+            document.getElementById('save-habits-inline').addEventListener('click', () => {
+                const selectedHabits = [];
+                document.querySelectorAll('#habit-options-inline input[type="checkbox"]:checked').forEach(input => {
+                    selectedHabits.push(input.dataset.habitId);
+                });
+                userHabits = selectedHabits;
+                saveData();
+                renderDashboard();
+                renderActiveHabitTrackers();
+                habitSelectionArea.classList.add('hidden');
+            });
+            
+            moodLogger.addEventListener('click', e => {
+                 if (e.target.classList.contains('mood-btn')) {
+                    const moodValue = parseInt(e.target.dataset.mood, 10);
+                    const today = getTodayString();
+                    
+                    const existingEntryIndex = moodData.findIndex(entry => entry.date === today);
+                    if (existingEntryIndex > -1) {
+                        moodData[existingEntryIndex].mood = moodValue;
+                    } else {
+                        moodData.push({ date: today, mood: moodValue });
+                    }
+                    
+                    saveData();
+                    createMoodChart();
+                    updateMoodLoggerUI();
+                    
+                    const confirmation = document.getElementById('mood-confirmation');
+                    confirmation.classList.remove('hidden');
+                    setTimeout(() => confirmation.classList.add('hidden'), 3000);
+                }
+            });
+
+            const bookingForm = document.getElementById('booking-form');
+             bookingForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const confirmation = document.getElementById('booking-confirmation');
+                bookingForm.style.display = 'none';
+                confirmation.classList.remove('hidden');
+                // Simulate counselor reaching out
+                setTimeout(() => {
+                     bookingForm.reset();
+                     bookingForm.style.display = 'block';
+                     confirmation.classList.add('hidden');
+                }, 5000);
+            });
+
+            // Chat Modal Listeners
+            openChatBtnHero.addEventListener('click', () => {
+                chatModal.classList.remove('hidden');
+                setAvatarAnimation('idle'); // Ensure avatar is idling when chat opens
+            });
+
+            closeChatBtn.addEventListener('click', () => {
+                chatModal.classList.add('hidden');
+            });
+
+            // --- CHAT FORM SUBMISSION (Integration Point) ---
+            chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const messageText = chatInput.value.trim();
+                if (messageText) {
+                    // --- 1. User Message (Before Bot Response) ---
+                    
+                    // Add user message to UI with user logo
+                    const userMessageEl = document.createElement('div');
+                    userMessageEl.className = 'user-message-container';
+                    userMessageEl.innerHTML = `
+                        <div class="bg-indigo-500 text-white p-3 rounded-lg rounded-br-none max-w-xs shadow-md"><p>${messageText}</p></div>
+                        <span class="text-2xl ml-2">🟣</span>
+                    `;
+                    chatMessages.appendChild(userMessageEl);
+                    chatInput.value = '';
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                    // --- 2. Bot Processing (Simulated Dialogflow/Thinking) ---
+
+                    // Add typing indicator
+                    const botTypingEl = document.createElement('div');
+                    botTypingEl.className = 'bot-message-container typing-indicator';
+                    botTypingEl.innerHTML = `
+                        <span class="text-2xl mr-2">❤️</span>
+                        <div class="bg-indigo-100 text-gray-800 p-3 rounded-lg rounded-tl-none max-w-xs shadow-sm flex items-center">
+                            <div class="loader mr-2"></div> <p class="italic">PRERANA Assistant processing...</p>
+                        </div>
+                    `;
+                    chatMessages.appendChild(botTypingEl);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                    // --- 3. Simulate API and TTS Response ---
+                    
+                    // Mock API call and response. In a real app, this is where Dialogflow's webhook response comes in.
+                    await new Promise(resolve => setTimeout(resolve, 500)); 
+                    const botResponseText = `That's a very valid concern. Let's focus on mindfulness. Before tackling the next task, take two minutes to listen to your favorite relaxing music. This can significantly reduce executive stress.`;
+
+                    // Remove typing indicator
+                    botTypingEl.remove();
+
+                    // Trigger the TTS avatar simulation 
+                    await speakWithTTS(botResponseText);
+
+                    // --- 4. Display Bot Text ---
+                    const botResponseEl = document.createElement('div');
+                    botResponseEl.className = 'bot-message-container';
+                    botResponseEl.innerHTML = `
+                        <span class="text-2xl mr-2">❤️</span> 
+                        <div class="bg-indigo-100 text-gray-800 p-3 rounded-lg rounded-tl-none max-w-xs shadow-sm"><p>${botResponseText}</p></div>
+                    `;
+                    chatMessages.appendChild(botResponseEl);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                }
+            });
+
+
+            // Auth Modal Listeners
+            openAuthBtn.addEventListener('click', () => {
+                authModal.classList.remove('hidden');
+            });
+
+            closeAuthBtn.addEventListener('click', () => {
+                authModal.classList.add('hidden');
+            });
+
+            signinTab.addEventListener('click', () => {
+                signinTab.classList.add('auth-tab-active');
+                signupTab.classList.remove('auth-tab-active');
+                signinFormContainer.classList.remove('hidden');
+                signupFormContainer.classList.add('hidden');
+            });
+
+            signupTab.addEventListener('click', () => {
+                signupTab.classList.add('auth-tab-active');
+                signinTab.classList.remove('auth-tab-active');
+                signupFormContainer.classList.remove('hidden');
+                signinFormContainer.classList.add('hidden');
+            });
+
+            signinForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                // Placeholder sign in logic
+                setLoggedInState(true);
+                authModal.classList.add('hidden');
+            });
+
+             signupForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                profileData.name = document.getElementById('signup-name').value;
+                saveData();
+                setLoggedInState(true);
+                authModal.classList.add('hidden');
+            });
+            
+            signoutBtn.addEventListener('click', () => {
+                setLoggedInState(false);
+            });
+
+            // Profile Modal Listeners
+            openProfileBtn.addEventListener('click', () => {
+                renderProfileData();
+                profileModal.classList.remove('hidden');
+            });
+
+            closeProfileBtn.addEventListener('click', () => {
+                profileModal.classList.add('hidden');
+            });
+
+            editProfileBtn.addEventListener('click', (e) => {
+                const isEditing = e.target.textContent === 'Save Changes';
+                const fields = ['name', 'age', 'gender', 'course'];
+
+                if (isEditing) {
+                    // Save logic
+                    fields.forEach(field => {
+                        const editInput = document.getElementById(`profile-${field}-edit`);
+                        profileData[field] = editInput.value || null;
+                    });
+                    saveData();
+                    renderProfileData();
+
+                    // Toggle back to view mode
+                    fields.forEach(field => {
+                         document.getElementById(`profile-${field}-view`).classList.remove('hidden');
+                         document.getElementById(`profile-${field}-edit`).classList.add('hidden');
+                    });
+                    e.target.textContent = 'Edit Profile';
+                    e.target.classList.remove('bg-green-600', 'hover:bg-green-700');
+                    e.target.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+
+                } else {
+                    // Switch to edit mode
+                     fields.forEach(field => {
+                        const viewSpan = document.getElementById(`profile-${field}-view`);
+                        const editInput = document.getElementById(`profile-${field}-edit`);
+                        editInput.value = profileData[field] || '';
+                        viewSpan.classList.add('hidden');
+                        editInput.classList.remove('hidden');
+                    });
+                    e.target.textContent = 'Save Changes';
+                    e.target.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                    e.target.classList.add('bg-green-600', 'hover:bg-green-700');
+                }
+            });
+
+        }
+        
+        function addHabitButtonListeners() {
+            document.querySelectorAll('.toggle-habit-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const habitId = e.target.dataset.habitId;
+                    const today = getTodayString();
+                    if (!habitData[today]) habitData[today] = {};
+                    habitData[today][habitId] = !habitData[today][habitId];
+                    saveData();
+                    renderActiveHabitTrackers();
+                    renderDashboard(); // Re-render dashboard to update streaks
+                });
+            });
+        }
+
+        // --- RUN APP ---
+        initializeApp();
+    });
+    </script>
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+<df-messenger
+  intent="WELCOME"
+  chat-title="AI Assistant"
+  agent-id="a3e1f66c-fa91-4fd8-b5ab-1f8a660bed80"
+  language-code="en"
+></df-messenger>
+</body>
+</html>
